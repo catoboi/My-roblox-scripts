@@ -1,0 +1,298 @@
+-- SERVICES
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+
+-- THEME DATA
+local Themes = {
+	Dark = {
+		Main = Color3.fromRGB(25, 25, 25),
+		Secondary = Color3.fromRGB(35, 35, 35),
+		Text = Color3.fromRGB(255, 255, 255)
+	},
+	Light = {
+		Main = Color3.fromRGB(235, 235, 235),
+		Secondary = Color3.fromRGB(210, 210, 210),
+		Text = Color3.fromRGB(20, 20, 20)
+	}
+}
+local currentTheme = "Dark"
+
+-- GUI
+local gui = Instance.new("ScreenGui")
+gui.Name = "ScriptHub"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
+
+-- MAIN FRAME
+local main = Instance.new("Frame")
+main.Size = UDim2.new(0, 520, 0, 330)
+main.Position = UDim2.new(0.5, -260, 0.5, -165)
+main.BackgroundColor3 = Themes[currentTheme].Main
+main.Parent = gui
+Instance.new("UICorner", main).CornerRadius = UDim.new(0, 12)
+
+-- TOP BAR (for dragging)
+local top = Instance.new("Frame", main)
+top.Size = UDim2.new(1, 0, 0, 40)
+top.BackgroundColor3 = Themes[currentTheme].Secondary
+Instance.new("UICorner", top).CornerRadius = UDim.new(0, 12)
+
+local title = Instance.new("TextLabel", top)
+title.Size = UDim2.new(1, -20, 1, 0)
+title.Position = UDim2.new(0, 10, 0, 0)
+title.BackgroundTransparency = 1
+title.Text = "Basic Script Hub"
+title.Font = Enum.Font.GothamBold
+title.TextSize = 18
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.TextColor3 = Themes[currentTheme].Text
+
+-- SIDEBAR
+local sidebar = Instance.new("Frame", main)
+sidebar.Position = UDim2.new(0, 0, 0, 40)
+sidebar.Size = UDim2.new(0, 130, 1, -40)
+sidebar.BackgroundColor3 = Themes[currentTheme].Secondary
+
+-- CONTENT
+local content = Instance.new("Frame", main)
+content.Position = UDim2.new(0, 130, 0, 40)
+content.Size = UDim2.new(1, -130, 1, -40)
+content.BackgroundTransparency = 1
+
+-- PAGES
+local pages = {}
+
+local function createPage(name)
+	local frame = Instance.new("Frame")
+	frame.Size = UDim2.new(1, 0, 1, 0)
+	frame.BackgroundTransparency = 1
+	frame.Visible = false
+	frame.Parent = content
+	pages[name] = frame
+
+	local label = Instance.new("TextLabel", frame)
+	label.Size = UDim2.new(1, -20, 1, -20)
+	label.Position = UDim2.new(0, 10, 0, 10)
+	label.BackgroundTransparency = 1
+	label.TextWrapped = true
+	label.TextYAlignment = Enum.TextYAlignment.Top
+	label.Font = Enum.Font.Gotham
+	label.TextSize = 16
+	label.TextColor3 = Themes[currentTheme].Text
+	label.Text = name .. " Page"
+
+	return label, frame
+end
+
+-- CREATE PAGES
+local scriptsLabel, scriptsFrame = createPage("Scripts")
+scriptsLabel.Text = "No scripts yet."
+
+local settingsLabel = createPage("Settings")
+settingsLabel.Text = "Settings will go here."
+
+local themesLabel = createPage("Themes")
+themesLabel.Text = "Click buttons to change theme."
+
+local infoLabel = createPage("Info")
+infoLabel.Text = "Basic Script Hub\nMade by You"
+
+pages["Scripts"].Visible = true
+
+-- BUTTON CREATION
+local function createButton(text, order)
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(1, 0, 0, 40)
+	btn.Position = UDim2.new(0, 0, 0, (order - 1) * 42)
+	btn.BackgroundTransparency = 1
+	btn.Text = text
+	btn.Font = Enum.Font.Gotham
+	btn.TextSize = 15
+	btn.TextColor3 = Themes[currentTheme].Text
+	btn.Parent = sidebar
+
+	btn.MouseEnter:Connect(function()
+		TweenService:Create(btn, TweenInfo.new(0.15), {TextSize = 16}):Play()
+	end)
+	btn.MouseLeave:Connect(function()
+		TweenService:Create(btn, TweenInfo.new(0.15), {TextSize = 15}):Play()
+	end)
+
+	return btn
+end
+
+-- SIDEBAR BUTTONS
+local buttons = {
+	Scripts = createButton("Scripts", 1),
+	Settings = createButton("Settings", 2),
+	Themes = createButton("Themes", 3),
+	Info = createButton("Info", 4)
+}
+
+-- PAGE SWITCHING
+for name, button in pairs(buttons) do
+	button.MouseButton1Click:Connect(function()
+		for _, page in pairs(pages) do
+			page.Visible = false
+		end
+		pages[name].Visible = true
+	end)
+end
+
+-- THEME BUTTONS
+local darkBtn = Instance.new("TextButton", pages["Themes"])
+darkBtn.Size = UDim2.new(0, 120, 0, 35)
+darkBtn.Position = UDim2.new(0, 20, 0, 50)
+darkBtn.Text = "Dark Theme"
+
+local lightBtn = Instance.new("TextButton", pages["Themes"])
+lightBtn.Size = UDim2.new(0, 120, 0, 35)
+lightBtn.Position = UDim2.new(0, 20, 0, 95)
+lightBtn.Text = "Light Theme"
+
+darkBtn.MouseButton1Click:Connect(function()
+	currentTheme = "Dark"
+	main.BackgroundColor3 = Themes.Dark.Main
+	sidebar.BackgroundColor3 = Themes.Dark.Secondary
+	top.BackgroundColor3 = Themes.Dark.Secondary
+	title.TextColor3 = Themes.Dark.Text
+	for _, btn in pairs(buttons) do
+		btn.TextColor3 = Themes.Dark.Text
+	end
+	for _, p in pairs(pages) do
+		for _, c in pairs(p:GetChildren()) do
+			if c:IsA("TextLabel") then
+				c.TextColor3 = Themes.Dark.Text
+			end
+		end
+	end
+end)
+
+lightBtn.MouseButton1Click:Connect(function()
+	currentTheme = "Light"
+	main.BackgroundColor3 = Themes.Light.Main
+	sidebar.BackgroundColor3 = Themes.Light.Secondary
+	top.BackgroundColor3 = Themes.Light.Secondary
+	title.TextColor3 = Themes.Light.Text
+	for _, btn in pairs(buttons) do
+		btn.TextColor3 = Themes.Light.Text
+	end
+	for _, p in pairs(pages) do
+		for _, c in pairs(p:GetChildren()) do
+			if c:IsA("TextLabel") then
+				c.TextColor3 = Themes.Light.Text
+			end
+		end
+	end
+end)
+
+-- =========================
+-- WINDOW DRAGGING
+-- =========================
+local dragging = false
+local dragInput
+local dragStart
+local startPos
+
+local function update(input)
+	local delta = input.Position - dragStart
+	main.Position = UDim2.new(
+		startPos.X.Scale,
+		startPos.X.Offset + delta.X,
+		startPos.Y.Scale,
+		startPos.Y.Offset + delta.Y
+	)
+end
+
+top.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = main.Position
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+		end)
+	end
+end)
+
+top.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement then
+		dragInput = input
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if input == dragInput and dragging then
+		update(input)
+	end
+end)
+
+-- =========================
+-- SCROLLING SCRIPTS LIST
+-- =========================
+local scrollFrame = Instance.new("ScrollingFrame", pages["Scripts"])
+scrollFrame.Size = UDim2.new(1, -20, 1, -20)
+scrollFrame.Position = UDim2.new(0, 10, 0, 10)
+scrollFrame.BackgroundTransparency = 1
+scrollFrame.ScrollBarThickness = 6
+scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+
+local layout = Instance.new("UIListLayout", scrollFrame)
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+layout.Padding = UDim.new(0, 4)
+
+-- Clear old placeholders
+for _, c in pairs(scrollFrame:GetChildren()) do
+	if c:IsA("TextButton") then
+		c:Destroy()
+	end
+end
+
+-- Clear old script buttons if needed
+for _, c in pairs(scrollFrame:GetChildren()) do
+	if c:IsA("TextButton") then
+		c:Destroy()
+	end
+end
+
+-- Fly Script Button (GitHub)
+local flyBtn = Instance.new("TextButton")
+flyBtn.Size = UDim2.new(1, -10, 0, 35)
+flyBtn.Text = "The fastest fly script EVER"
+flyBtn.Font = Enum.Font.Gotham
+flyBtn.TextSize = 14
+flyBtn.TextColor3 = Themes[currentTheme].Text
+flyBtn.BackgroundColor3 = Themes[currentTheme].Secondary
+flyBtn.Parent = scrollFrame
+Instance.new("UICorner", flyBtn).CornerRadius = UDim.new(0, 6)
+
+-- Load the script from GitHub on click
+flyBtn.MouseButton1Click:Connect(function()
+	if not loadstring then
+		warn("loadstring is nil! This script only works in an executor.")
+		return
+	end
+
+	local url = "https://raw.githubusercontent.com/catoboi/My-roblox-scripts/refs/heads/main/fly.lua"
+	
+	local success, err = pcall(function()
+		loadstring(game:HttpGet(url))()
+	end)
+	
+	if not success then
+		warn("Failed to load Fly script:", err)
+	end
+end)
+
+
+-- Adjust CanvasSize dynamically
+local function updateCanvas()
+	scrollFrame.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 10)
+end
+layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvas)
+updateCanvas()
