@@ -1,4 +1,4 @@
-local flyScript = [[
+local fly.lua = [[
 -- SERVICES
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
