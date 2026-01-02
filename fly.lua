@@ -1,4 +1,3 @@
-local fly.lua = [[
 -- SERVICES
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
@@ -101,4 +100,3 @@ RunService.RenderStepped:Connect(function()
 	bv.Velocity = move * baseSpeed * speedMult
 	bg.CFrame = cam.CFrame
 end)
-]]
