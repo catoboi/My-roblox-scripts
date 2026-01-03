@@ -157,8 +157,6 @@ passwordBox.TextWrapped = false
 passwordBox.TextTruncate = Enum.TextTruncate.None
 passwordBox.TextStrokeTransparency = 1
 passwordBox.Text = ""
-passwordBox:SetAttribute("IsPassword", true)
-passwordBox.Password = true
 Instance.new("UICorner", passwordBox).CornerRadius = UDim.new(0, 6)
 
 -- Submit button
