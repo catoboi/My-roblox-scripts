@@ -63,7 +63,7 @@ local title = Instance.new("TextLabel", top)
 title.Size = UDim2.new(1, -20, 1, 0)
 title.Position = UDim2.new(0, 10, 0, 0)
 title.BackgroundTransparency = 1
-title.Text = "Basic Script Hub"
+title.Text = "Cato's Awesome Crazy Script Hub"
 title.Font = Enum.Font.GothamBold
 title.TextSize = 18
 title.TextXAlignment = Enum.TextXAlignment.Left
@@ -484,11 +484,34 @@ do
 			dragging = true
 			dragStart = input.Position
 			startPos = main.Position
-			velocity = Vector2.new(0, 0) -- Reset velocity when grabbed
+			
+			-- Track last position for velocity calculation
+			local lastPos = main.Position
+			local lastTime = tick()
 
 			input.Changed:Connect(function()
 				if input.UserInputState == Enum.UserInputState.End then
 					dragging = false
+					
+					-- Calculate velocity based on drag speed when bounce mode is on
+					if bounceEnabled then
+						local currentTime = tick()
+						local deltaTime = currentTime - lastTime
+						if deltaTime > 0 then
+							local deltaX = main.Position.X.Offset - lastPos.X.Offset
+							local deltaY = main.Position.Y.Offset - lastPos.Y.Offset
+							velocity = Vector2.new(deltaX / deltaTime * 0.1, deltaY / deltaTime * 0.1)
+						end
+					end
+				end
+			end)
+			
+			-- Update tracking for velocity
+			spawn(function()
+				while dragging do
+					lastPos = main.Position
+					lastTime = tick()
+					wait(0.016) -- ~60 fps
 				end
 			end)
 		end
@@ -508,7 +531,7 @@ do
 
 	-- Smoothly move the frame every render step with bounce
 	game:GetService("RunService").RenderStepped:Connect(function(dt)
-		if not dragging and bounceEnabled then
+		if bounceEnabled then
 			-- Get screen size
 			local screenSize = main.Parent.AbsoluteSize
 			local frameSize = main.AbsoluteSize
@@ -517,47 +540,56 @@ do
 			local currentX = main.Position.X.Offset
 			local currentY = main.Position.Y.Offset
 			
-			-- Apply velocity
-			velocity = velocity + Vector2.new(0, 0) -- Can add gravity here if desired
-			currentX = currentX + velocity.X
-			currentY = currentY + velocity.Y
-			
-			-- Bounce off edges
-			if currentX <= 0 then
-				currentX = 0
-				velocity = Vector2.new(-velocity.X * bounceMultiplier, velocity.Y)
-			elseif currentX + frameSize.X >= screenSize.X then
-				currentX = screenSize.X - frameSize.X
-				velocity = Vector2.new(-velocity.X * bounceMultiplier, velocity.Y)
+			if dragging then
+				-- While dragging, just update position normally
+				main.Position = UDim2.new(
+					main.Position.X.Scale,
+					main.Position.X.Offset + (targetPos.X.Offset - main.Position.X.Offset) * 0.2,
+					main.Position.Y.Scale,
+					main.Position.Y.Offset + (targetPos.Y.Offset - main.Position.Y.Offset) * 0.2
+				)
+			else
+				-- Apply velocity when not dragging
+				currentX = currentX + velocity.X
+				currentY = currentY + velocity.Y
+				
+				-- Bounce off edges
+				if currentX <= 0 then
+					currentX = 0
+					velocity = Vector2.new(-velocity.X * bounceMultiplier, velocity.Y)
+				elseif currentX + frameSize.X >= screenSize.X then
+					currentX = screenSize.X - frameSize.X
+					velocity = Vector2.new(-velocity.X * bounceMultiplier, velocity.Y)
+				end
+				
+				if currentY <= 0 then
+					currentY = 0
+					velocity = Vector2.new(velocity.X, -velocity.Y * bounceMultiplier)
+				elseif currentY + frameSize.Y >= screenSize.Y then
+					currentY = screenSize.Y - frameSize.Y
+					velocity = Vector2.new(velocity.X, -velocity.Y * bounceMultiplier)
+				end
+				
+				-- Apply friction to slow down
+				velocity = velocity * 0.98
+				
+				-- Stop if moving very slowly
+				if velocity.Magnitude < 0.5 then
+					velocity = Vector2.new(0, 0)
+				end
+				
+				-- Update position
+				main.Position = UDim2.new(0, currentX, 0, currentY)
+				targetPos = main.Position
 			end
-			
-			if currentY <= 0 then
-				currentY = 0
-				velocity = Vector2.new(velocity.X, -velocity.Y * bounceMultiplier)
-			elseif currentY + frameSize.Y >= screenSize.Y then
-				currentY = screenSize.Y - frameSize.Y
-				velocity = Vector2.new(velocity.X, -velocity.Y * bounceMultiplier)
-			end
-			
-			-- Update position
-			main.Position = UDim2.new(0, currentX, 0, currentY)
-			targetPos = main.Position
 		else
-			-- Normal smooth dragging
+			-- Normal smooth dragging when bounce is disabled
 			main.Position = UDim2.new(
 				main.Position.X.Scale,
 				main.Position.X.Offset + (targetPos.X.Offset - main.Position.X.Offset) * 0.2,
 				main.Position.Y.Scale,
 				main.Position.Y.Offset + (targetPos.Y.Offset - main.Position.Y.Offset) * 0.2
 			)
-			
-			-- Calculate velocity from movement when dragging ends
-			if not dragging and bounceEnabled then
-				velocity = Vector2.new(
-					(targetPos.X.Offset - main.Position.X.Offset) * 2,
-					(targetPos.Y.Offset - main.Position.Y.Offset) * 2
-				)
-			end
 		end
 	end)
 end
