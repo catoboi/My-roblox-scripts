@@ -18,13 +18,30 @@ local Themes = {
 		Main = Color3.fromRGB(235, 235, 235),
 		Secondary = Color3.fromRGB(210, 210, 210),
 		Text = Color3.fromRGB(20, 20, 20)
+	},
+	GreenRed = {
+		Main = Color3.fromRGB(20, 60, 20),
+		Secondary = Color3.fromRGB(100, 20, 20),
+		Text = Color3.fromRGB(255, 255, 255)
+	},
+	WhiteBlack = {
+		Main = Color3.fromRGB(255, 255, 255),
+		Secondary = Color3.fromRGB(0, 0, 0),
+		Text = Color3.fromRGB(100, 100, 100)
+	},
+	YellowOrange = {
+		Main = Color3.fromRGB(255, 200, 50),
+		Secondary = Color3.fromRGB(255, 140, 0),
+		Text = Color3.fromRGB(50, 30, 0)
 	}
 }
 local currentTheme = "Dark"
+local rainbowActive = false
+local glitchyActive = false
 
 -- GUI
 local gui = Instance.new("ScreenGui")
-gui.Name = "Cato's Awesome Crazy Script Hub"
+gui.Name = "ScriptHub"
 gui.ResetOnSpawn = false
 gui.Parent = player:WaitForChild("PlayerGui")
 
@@ -107,7 +124,7 @@ disclaimerLabel.Text = "⚠️ DISCLAIMER ⚠️\n\n" ..
 	"• Use at your own risk\n" ..
 	"• We are not responsible for any consequences\n" ..
 	"• Scripts are provided as-is without warranty\n\n" ..
-	"And also.. DO NOT STEAL THIS AND MODIFY IT."
+	"Please be respectful and responsible when using exploits."
 
 -- =========================
 -- OWNER MODE
@@ -202,7 +219,7 @@ end)
 
 
 local infoLabel = createPage("Info")
-infoLabel.Text = "Basic Script Hub\ntdsfan52439thethird"
+infoLabel.Text = "Basic Script Hub\nMade by You"
 
 pages["Scripts"].Visible = true
 
@@ -252,44 +269,169 @@ local darkBtn = Instance.new("TextButton", pages["Themes"])
 darkBtn.Size = UDim2.new(0, 120, 0, 35)
 darkBtn.Position = UDim2.new(0, 20, 0, 50)
 darkBtn.Text = "Dark Theme"
+darkBtn.Font = Enum.Font.Gotham
+darkBtn.TextSize = 14
+darkBtn.TextColor3 = Themes[currentTheme].Text
+darkBtn.BackgroundColor3 = Themes[currentTheme].Secondary
+Instance.new("UICorner", darkBtn).CornerRadius = UDim.new(0, 6)
 
 local lightBtn = Instance.new("TextButton", pages["Themes"])
 lightBtn.Size = UDim2.new(0, 120, 0, 35)
 lightBtn.Position = UDim2.new(0, 20, 0, 95)
 lightBtn.Text = "Light Theme"
+lightBtn.Font = Enum.Font.Gotham
+lightBtn.TextSize = 14
+lightBtn.TextColor3 = Themes[currentTheme].Text
+lightBtn.BackgroundColor3 = Themes[currentTheme].Secondary
+Instance.new("UICorner", lightBtn).CornerRadius = UDim.new(0, 6)
 
-darkBtn.MouseButton1Click:Connect(function()
-	currentTheme = "Dark"
-	main.BackgroundColor3 = Themes.Dark.Main
-	sidebar.BackgroundColor3 = Themes.Dark.Secondary
-	top.BackgroundColor3 = Themes.Dark.Secondary
-	title.TextColor3 = Themes.Dark.Text
+local greenRedBtn = Instance.new("TextButton", pages["Themes"])
+greenRedBtn.Size = UDim2.new(0, 140, 0, 35)
+greenRedBtn.Position = UDim2.new(0, 20, 0, 140)
+greenRedBtn.Text = "Green and Red"
+greenRedBtn.Font = Enum.Font.Gotham
+greenRedBtn.TextSize = 14
+greenRedBtn.TextColor3 = Themes[currentTheme].Text
+greenRedBtn.BackgroundColor3 = Themes[currentTheme].Secondary
+Instance.new("UICorner", greenRedBtn).CornerRadius = UDim.new(0, 6)
+
+local whiteBlackBtn = Instance.new("TextButton", pages["Themes"])
+whiteBlackBtn.Size = UDim2.new(0, 140, 0, 35)
+whiteBlackBtn.Position = UDim2.new(0, 20, 0, 185)
+whiteBlackBtn.Text = "White and Black"
+whiteBlackBtn.Font = Enum.Font.Gotham
+whiteBlackBtn.TextSize = 14
+whiteBlackBtn.TextColor3 = Themes[currentTheme].Text
+whiteBlackBtn.BackgroundColor3 = Themes[currentTheme].Secondary
+Instance.new("UICorner", whiteBlackBtn).CornerRadius = UDim.new(0, 6)
+
+local yellowOrangeBtn = Instance.new("TextButton", pages["Themes"])
+yellowOrangeBtn.Size = UDim2.new(0, 140, 0, 35)
+yellowOrangeBtn.Position = UDim2.new(0, 20, 0, 230)
+yellowOrangeBtn.Text = "Yellow and Orange"
+yellowOrangeBtn.Font = Enum.Font.Gotham
+yellowOrangeBtn.TextSize = 14
+yellowOrangeBtn.TextColor3 = Themes[currentTheme].Text
+yellowOrangeBtn.BackgroundColor3 = Themes[currentTheme].Secondary
+Instance.new("UICorner", yellowOrangeBtn).CornerRadius = UDim.new(0, 6)
+
+local rainbowBtn = Instance.new("TextButton", pages["Themes"])
+rainbowBtn.Size = UDim2.new(0, 140, 0, 35)
+rainbowBtn.Position = UDim2.new(0, 170, 0, 50)
+rainbowBtn.Text = "Rainbow"
+rainbowBtn.Font = Enum.Font.Gotham
+rainbowBtn.TextSize = 14
+rainbowBtn.TextColor3 = Themes[currentTheme].Text
+rainbowBtn.BackgroundColor3 = Themes[currentTheme].Secondary
+Instance.new("UICorner", rainbowBtn).CornerRadius = UDim.new(0, 6)
+
+local glitchyBtn = Instance.new("TextButton", pages["Themes"])
+glitchyBtn.Size = UDim2.new(0, 140, 0, 35)
+glitchyBtn.Position = UDim2.new(0, 170, 0, 95)
+glitchyBtn.Text = "Glitchy"
+glitchyBtn.Font = Enum.Font.Gotham
+glitchyBtn.TextSize = 14
+glitchyBtn.TextColor3 = Themes[currentTheme].Text
+glitchyBtn.BackgroundColor3 = Themes[currentTheme].Secondary
+Instance.new("UICorner", glitchyBtn).CornerRadius = UDim.new(0, 6)
+
+-- Helper function to apply theme
+local function applyTheme(themeName)
+	rainbowActive = false
+	glitchyActive = false
+	currentTheme = themeName
+	
+	local theme = Themes[themeName]
+	main.BackgroundColor3 = theme.Main
+	sidebar.BackgroundColor3 = theme.Secondary
+	top.BackgroundColor3 = theme.Secondary
+	title.TextColor3 = theme.Text
+	
 	for _, btn in pairs(buttons) do
-		btn.TextColor3 = Themes.Dark.Text
+		btn.TextColor3 = theme.Text
 	end
 	for _, p in pairs(pages) do
 		for _, c in pairs(p:GetChildren()) do
 			if c:IsA("TextLabel") then
-				c.TextColor3 = Themes.Dark.Text
+				c.TextColor3 = theme.Text
 			end
 		end
 	end
+	
+	-- Update theme buttons
+	darkBtn.TextColor3 = theme.Text
+	darkBtn.BackgroundColor3 = theme.Secondary
+	lightBtn.TextColor3 = theme.Text
+	lightBtn.BackgroundColor3 = theme.Secondary
+	greenRedBtn.TextColor3 = theme.Text
+	greenRedBtn.BackgroundColor3 = theme.Secondary
+	whiteBlackBtn.TextColor3 = theme.Text
+	whiteBlackBtn.BackgroundColor3 = theme.Secondary
+	yellowOrangeBtn.TextColor3 = theme.Text
+	yellowOrangeBtn.BackgroundColor3 = theme.Secondary
+	rainbowBtn.TextColor3 = theme.Text
+	rainbowBtn.BackgroundColor3 = theme.Secondary
+	glitchyBtn.TextColor3 = theme.Text
+	glitchyBtn.BackgroundColor3 = theme.Secondary
+end
+
+darkBtn.MouseButton1Click:Connect(function()
+	applyTheme("Dark")
 end)
 
 lightBtn.MouseButton1Click:Connect(function()
-	currentTheme = "Light"
-	main.BackgroundColor3 = Themes.Light.Main
-	sidebar.BackgroundColor3 = Themes.Light.Secondary
-	top.BackgroundColor3 = Themes.Light.Secondary
-	title.TextColor3 = Themes.Light.Text
-	for _, btn in pairs(buttons) do
-		btn.TextColor3 = Themes.Light.Text
+	applyTheme("Light")
+end)
+
+greenRedBtn.MouseButton1Click:Connect(function()
+	applyTheme("GreenRed")
+end)
+
+whiteBlackBtn.MouseButton1Click:Connect(function()
+	applyTheme("WhiteBlack")
+end)
+
+yellowOrangeBtn.MouseButton1Click:Connect(function()
+	applyTheme("YellowOrange")
+end)
+
+rainbowBtn.MouseButton1Click:Connect(function()
+	rainbowActive = true
+	glitchyActive = false
+end)
+
+glitchyBtn.MouseButton1Click:Connect(function()
+	glitchyActive = true
+	rainbowActive = false
+end)
+
+-- Rainbow and Glitchy effects
+game:GetService("RunService").RenderStepped:Connect(function()
+	if rainbowActive then
+		local hue = tick() % 5 / 5
+		local color = Color3.fromHSV(hue, 1, 1)
+		main.BackgroundColor3 = color
+		sidebar.BackgroundColor3 = Color3.fromHSV((hue + 0.1) % 1, 0.8, 0.8)
+		top.BackgroundColor3 = Color3.fromHSV((hue + 0.2) % 1, 0.8, 0.8)
 	end
-	for _, p in pairs(pages) do
-		for _, c in pairs(p:GetChildren()) do
-			if c:IsA("TextLabel") then
-				c.TextColor3 = Themes.Light.Text
-			end
+	
+	if glitchyActive then
+		if math.random() > 0.95 then
+			main.BackgroundColor3 = Color3.fromRGB(
+				math.random(0, 255),
+				math.random(0, 255),
+				math.random(0, 255)
+			)
+			sidebar.BackgroundColor3 = Color3.fromRGB(
+				math.random(0, 255),
+				math.random(0, 255),
+				math.random(0, 255)
+			)
+			top.BackgroundColor3 = Color3.fromRGB(
+				math.random(0, 255),
+				math.random(0, 255),
+				math.random(0, 255)
+			)
 		end
 	end
 end)
