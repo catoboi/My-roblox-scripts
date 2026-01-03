@@ -571,7 +571,7 @@ do
 				end
 				
 				-- Apply friction to slow down
-				velocity = velocity * 0.98
+				velocity = velocity * 2
 				
 				-- Stop if moving very slowly
 				if velocity.Magnitude < 0.5 then
