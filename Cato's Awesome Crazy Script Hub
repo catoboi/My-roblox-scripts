@@ -24,7 +24,7 @@ local currentTheme = "Dark"
 
 -- GUI
 local gui = Instance.new("ScreenGui")
-gui.Name = "ScriptHub"
+gui.Name = "Cato's Awesome Crazy Script Hub"
 gui.ResetOnSpawn = false
 gui.Parent = player:WaitForChild("PlayerGui")
 
@@ -99,11 +99,21 @@ settingsLabel.Text = "Settings will go here."
 local themesLabel = createPage("Themes")
 themesLabel.Text = "Click buttons to change theme."
 
+local disclaimerLabel = createPage("Disclaimer")
+disclaimerLabel.Text = "⚠️ DISCLAIMER ⚠️\n\n" ..
+	"By using this script hub, you acknowledge that:\n\n" ..
+	"• Using scripts may violate Roblox Terms of Service\n" ..
+	"• Your account could be banned or suspended\n" ..
+	"• Use at your own risk\n" ..
+	"• We are not responsible for any consequences\n" ..
+	"• Scripts are provided as-is without warranty\n\n" ..
+	"And also.. DO NOT STEAL THIS AND MODIFY IT."
+
 -- =========================
 -- OWNER MODE
 -- =========================
 
-local OWNER_PASSWORD = "themostawesomescripthubever555"
+local OWNER_PASSWORD = "PPPG777Gqqq"
 
 -- Owner Mode Button (inside Settings page)
 local ownerBtn = Instance.new("TextButton", pages["Settings"])
@@ -192,7 +202,7 @@ end)
 
 
 local infoLabel = createPage("Info")
-infoLabel.Text = "Basic Script Hub\nMade by You"
+infoLabel.Text = "Basic Script Hub\ntdsfan52439thethird"
 
 pages["Scripts"].Visible = true
 
@@ -223,7 +233,8 @@ local buttons = {
 	Scripts = createButton("Scripts", 1),
 	Settings = createButton("Settings", 2),
 	Themes = createButton("Themes", 3),
-	Info = createButton("Info", 4)
+	Disclaimer = createButton("Disclaimer", 4),
+	Info = createButton("Info", 5)
 }
 
 -- PAGE SWITCHING
@@ -247,7 +258,7 @@ lightBtn.Size = UDim2.new(0, 120, 0, 35)
 lightBtn.Position = UDim2.new(0, 20, 0, 95)
 lightBtn.Text = "Light Theme"
 
-darkBtn.MouseButton1Click:Connect(function)
+darkBtn.MouseButton1Click:Connect(function()
 	currentTheme = "Dark"
 	main.BackgroundColor3 = Themes.Dark.Main
 	sidebar.BackgroundColor3 = Themes.Dark.Secondary
@@ -265,7 +276,7 @@ darkBtn.MouseButton1Click:Connect(function)
 	end
 end)
 
-lightBtn.MouseButton1Click:Connect(function)
+lightBtn.MouseButton1Click:Connect(function()
 	currentTheme = "Light"
 	main.BackgroundColor3 = Themes.Light.Main
 	sidebar.BackgroundColor3 = Themes.Light.Secondary
