@@ -381,20 +381,30 @@ Instance.new("UICorner", flyBtn).CornerRadius = UDim.new(0, 6)
 
 -- Load the script from GitHub on click
 flyBtn.MouseButton1Click:Connect(function()
-	if not loadstring then
-		warn("loadstring is nil! This script only works in an executor.")
+	if typeof(loadstring) ~= "function" then
+		warn("loadstring is not available.")
 		return
 	end
 
 	local url = "https://raw.githubusercontent.com/catoboi/My-roblox-scripts/refs/heads/main/fly.lua"
-	
+
+	local source
 	local success, err = pcall(function()
-		loadstring(game:HttpGet(url))()
+		source = game:HttpGet(url)
 	end)
-	
-	if not success then
-		warn("Failed to load Fly script:", err)
+
+	if not success or not source then
+		warn("HttpGet failed:", err)
+		return
 	end
+
+	local func = loadstring(source)
+	if not func then
+		warn("loadstring failed.")
+		return
+	end
+
+	func()
 end)
 
 
