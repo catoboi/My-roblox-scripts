@@ -153,7 +153,7 @@ lightBtn.Size = UDim2.new(0, 120, 0, 35)
 lightBtn.Position = UDim2.new(0, 20, 0, 95)
 lightBtn.Text = "Light Theme"
 
-darkBtn.MouseButton1Click:Connect(function()
+darkBtn.MouseButton1Click:Connect(function)
 	currentTheme = "Dark"
 	main.BackgroundColor3 = Themes.Dark.Main
 	sidebar.BackgroundColor3 = Themes.Dark.Secondary
@@ -171,7 +171,7 @@ darkBtn.MouseButton1Click:Connect(function()
 	end
 end)
 
-lightBtn.MouseButton1Click:Connect(function()
+lightBtn.MouseButton1Click:Connect(function)
 	currentTheme = "Light"
 	main.BackgroundColor3 = Themes.Light.Main
 	sidebar.BackgroundColor3 = Themes.Light.Secondary
