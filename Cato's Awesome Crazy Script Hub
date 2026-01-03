@@ -383,32 +383,36 @@ Instance.new("UICorner", flyBtn).CornerRadius = UDim.new(0, 6)
 
 -- Load the script from GitHub on click
 flyBtn.MouseButton1Click:Connect(function()
-	if typeof(loadstring) ~= "function" then
-		warn("loadstring is not available.")
+	-- Ensure executor environment
+	if type(loadstring) ~= "function" then
+		warn("Executor required: loadstring unavailable.")
+		return
+	end
+
+	if not (game and game.HttpGet) then
+		warn("HttpGet unavailable.")
 		return
 	end
 
 	local url = "https://raw.githubusercontent.com/catoboi/My-roblox-scripts/refs/heads/main/fly.lua"
 
-	local source
-	local success, err = pcall(function()
-		source = game:HttpGet(url)
+	local ok, source = pcall(function()
+		return game:HttpGet(url)
 	end)
 
-	if not success or not source then
-		warn("HttpGet failed:", err)
+	if not ok or type(source) ~= "string" then
+		warn("Failed to fetch script.")
 		return
 	end
 
-	local func = loadstring(source)
-	if not func then
-		warn("loadstring failed.")
+	local fn = loadstring(source)
+	if type(fn) ~= "function" then
+		warn("Script failed to compile.")
 		return
 	end
 
-	func()
+	fn()
 end)
-
 
 -- Adjust CanvasSize dynamically
 local function updateCanvas()
