@@ -97,6 +97,100 @@ settingsLabel.Text = "Settings will go here."
 local themesLabel = createPage("Themes")
 themesLabel.Text = "Click buttons to change theme."
 
+-- =========================
+-- OWNER MODE
+-- =========================
+
+local OWNER_PASSWORD = "themostawesomescripthubever555"
+
+-- Owner Mode Button (inside Settings page)
+local ownerBtn = Instance.new("TextButton", pages["Settings"])
+ownerBtn.Size = UDim2.new(0, 180, 0, 40)
+ownerBtn.Position = UDim2.new(0, 20, 0, 60)
+ownerBtn.Text = "OWNER MODE"
+ownerBtn.Font = Enum.Font.GothamBold
+ownerBtn.TextSize = 14
+ownerBtn.TextColor3 = Themes[currentTheme].Text
+ownerBtn.BackgroundColor3 = Themes[currentTheme].Secondary
+Instance.new("UICorner", ownerBtn).CornerRadius = UDim.new(0, 8)
+
+-- Owner Mode GUI (hidden by default)
+local ownerGui = Instance.new("Frame", gui)
+ownerGui.Size = UDim2.new(0, 420, 0, 220)
+ownerGui.Position = UDim2.new(0.5, -210, 0.5, -110)
+ownerGui.BackgroundColor3 = Themes[currentTheme].Main
+ownerGui.Visible = false
+ownerGui.ZIndex = 50
+Instance.new("UICorner", ownerGui).CornerRadius = UDim.new(0, 12)
+
+-- Text explanation
+local ownerText = Instance.new("TextLabel", ownerGui)
+ownerText.Size = UDim2.new(1, -30, 0, 80)
+ownerText.Position = UDim2.new(0, 15, 0, 15)
+ownerText.BackgroundTransparency = 1
+ownerText.TextWrapped = true
+ownerText.TextYAlignment = Enum.TextYAlignment.Top
+ownerText.Font = Enum.Font.Gotham
+ownerText.TextSize = 14
+ownerText.TextColor3 = Themes[currentTheme].Text
+ownerText.Text =
+	"You must put in a password to enter Owner Mode.\n" ..
+	"Currently, you have a user mode that has basic scripts."
+
+-- Password box
+local passwordBox = Instance.new("TextBox", ownerGui)
+passwordBox.Size = UDim2.new(1, -40, 0, 35)
+passwordBox.Position = UDim2.new(0, 20, 0, 110)
+passwordBox.PlaceholderText = "Enter password..."
+passwordBox.Text = ""
+passwordBox.ClearTextOnFocus = false
+passwordBox.Font = Enum.Font.Gotham
+passwordBox.TextSize = 14
+passwordBox.TextColor3 = Themes[currentTheme].Text
+passwordBox.BackgroundColor3 = Themes[currentTheme].Secondary
+passwordBox.TextXAlignment = Enum.TextXAlignment.Left
+passwordBox.ZIndex = 51
+passwordBox.TextEditable = true
+passwordBox.TextTransparency = 0
+passwordBox.TextScaled = false
+passwordBox.TextWrapped = false
+passwordBox.TextTruncate = Enum.TextTruncate.None
+passwordBox.TextStrokeTransparency = 1
+passwordBox.Text = ""
+passwordBox:SetAttribute("IsPassword", true)
+passwordBox.Password = true
+Instance.new("UICorner", passwordBox).CornerRadius = UDim.new(0, 6)
+
+-- Submit button
+local submitBtn = Instance.new("TextButton", ownerGui)
+submitBtn.Size = UDim2.new(0, 120, 0, 35)
+submitBtn.Position = UDim2.new(0.5, -60, 1, -55)
+submitBtn.Text = "Submit"
+submitBtn.Font = Enum.Font.GothamBold
+submitBtn.TextSize = 14
+submitBtn.TextColor3 = Themes[currentTheme].Text
+submitBtn.BackgroundColor3 = Themes[currentTheme].Secondary
+submitBtn.ZIndex = 51
+Instance.new("UICorner", submitBtn).CornerRadius = UDim.new(0, 6)
+
+-- Open Owner Mode GUI
+ownerBtn.MouseButton1Click:Connect(function()
+	passwordBox.Text = ""
+	ownerGui.Visible = true
+end)
+
+-- Submit password
+submitBtn.MouseButton1Click:Connect(function()
+	if passwordBox.Text == OWNER_PASSWORD then
+		ownerGui.Visible = false
+		print("Owner Mode unlocked") -- placeholder for later logic
+	else
+		passwordBox.Text = ""
+		passwordBox.PlaceholderText = "Wrong password."
+	end
+end)
+
+
 local infoLabel = createPage("Info")
 infoLabel.Text = "Basic Script Hub\nMade by You"
 
