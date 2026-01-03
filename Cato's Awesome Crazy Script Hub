@@ -1,3 +1,5 @@
+print("Script started! Thank you for using this script, user!")
+
 -- SERVICES
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
