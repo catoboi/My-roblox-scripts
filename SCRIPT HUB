@@ -190,47 +190,63 @@ lightBtn.MouseButton1Click:Connect(function()
 end)
 
 -- =========================
--- WINDOW DRAGGING
+-- SMOOTH WINDOW DRAGGING
 -- =========================
-local dragging = false
-local dragInput
-local dragStart
-local startPos
+do
+	local dragging = false
+	local dragStart = Vector2.new()
+	local startPos = UDim2.new()
+	local dragInput
 
-local function update(input)
-	local delta = input.Position - dragStart
-	main.Position = UDim2.new(
-		startPos.X.Scale,
-		startPos.X.Offset + delta.X,
-		startPos.Y.Scale,
-		startPos.Y.Offset + delta.Y
-	)
+	-- Target position for smooth lerp
+	local targetPos = main.Position
+
+	local function update(input)
+		local delta = input.Position - dragStart
+		targetPos = UDim2.new(
+			startPos.X.Scale,
+			startPos.X.Offset + delta.X,
+			startPos.Y.Scale,
+			startPos.Y.Offset + delta.Y
+		)
+	end
+
+	top.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = true
+			dragStart = input.Position
+			startPos = main.Position
+
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+				end
+			end)
+		end
+	end)
+
+	top.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement then
+			dragInput = input
+		end
+	end)
+
+	UserInputService.InputChanged:Connect(function(input)
+		if input == dragInput and dragging then
+			update(input)
+		end
+	end)
+
+	-- Smoothly move the frame every render step
+	game:GetService("RunService").RenderStepped:Connect(function(dt)
+		main.Position = UDim2.new(
+			main.Position.X.Scale,
+			main.Position.X.Offset + (targetPos.X.Offset - main.Position.X.Offset) * 0.2,
+			main.Position.Y.Scale,
+			main.Position.Y.Offset + (targetPos.Y.Offset - main.Position.Y.Offset) * 0.2
+		)
+	end)
 end
-
-top.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		dragging = true
-		dragStart = input.Position
-		startPos = main.Position
-		input.Changed:Connect(function()
-			if input.UserInputState == Enum.UserInputState.End then
-				dragging = false
-			end
-		end)
-	end
-end)
-
-top.InputChanged:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseMovement then
-		dragInput = input
-	end
-end)
-
-UserInputService.InputChanged:Connect(function(input)
-	if input == dragInput and dragging then
-		update(input)
-	end
-end)
 
 -- =========================
 -- SCROLLING SCRIPTS LIST
