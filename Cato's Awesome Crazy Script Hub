@@ -143,6 +143,23 @@ ownerBtn.TextColor3 = Themes[currentTheme].Text
 ownerBtn.BackgroundColor3 = Themes[currentTheme].Secondary
 Instance.new("UICorner", ownerBtn).CornerRadius = UDim.new(0, 8)
 
+-- Bounce Mode Toggle Button
+local bounceEnabled = false
+local bounceBtn = Instance.new("TextButton", pages["Settings"])
+bounceBtn.Size = UDim2.new(0, 180, 0, 40)
+bounceBtn.Position = UDim2.new(0, 20, 0, 110)
+bounceBtn.Text = "Bounce Mode: OFF"
+bounceBtn.Font = Enum.Font.GothamBold
+bounceBtn.TextSize = 14
+bounceBtn.TextColor3 = Themes[currentTheme].Text
+bounceBtn.BackgroundColor3 = Themes[currentTheme].Secondary
+Instance.new("UICorner", bounceBtn).CornerRadius = UDim.new(0, 8)
+
+bounceBtn.MouseButton1Click:Connect(function()
+	bounceEnabled = not bounceEnabled
+	bounceBtn.Text = bounceEnabled and "Bounce Mode: ON" or "Bounce Mode: OFF"
+end)
+
 -- Owner Mode GUI (hidden by default)
 local ownerGui = Instance.new("Frame", gui)
 ownerGui.Size = UDim2.new(0, 420, 0, 220)
@@ -447,6 +464,10 @@ do
 
 	-- Target position for smooth lerp
 	local targetPos = main.Position
+	
+	-- Bounce physics
+	local velocity = Vector2.new(0, 0)
+	local bounceMultiplier = 0.8
 
 	local function update(input)
 		local delta = input.Position - dragStart
@@ -463,6 +484,7 @@ do
 			dragging = true
 			dragStart = input.Position
 			startPos = main.Position
+			velocity = Vector2.new(0, 0) -- Reset velocity when grabbed
 
 			input.Changed:Connect(function()
 				if input.UserInputState == Enum.UserInputState.End then
@@ -484,14 +506,59 @@ do
 		end
 	end)
 
-	-- Smoothly move the frame every render step
+	-- Smoothly move the frame every render step with bounce
 	game:GetService("RunService").RenderStepped:Connect(function(dt)
-		main.Position = UDim2.new(
-			main.Position.X.Scale,
-			main.Position.X.Offset + (targetPos.X.Offset - main.Position.X.Offset) * 0.2,
-			main.Position.Y.Scale,
-			main.Position.Y.Offset + (targetPos.Y.Offset - main.Position.Y.Offset) * 0.2
-		)
+		if not dragging and bounceEnabled then
+			-- Get screen size
+			local screenSize = main.Parent.AbsoluteSize
+			local frameSize = main.AbsoluteSize
+			
+			-- Current position in pixels
+			local currentX = main.Position.X.Offset
+			local currentY = main.Position.Y.Offset
+			
+			-- Apply velocity
+			velocity = velocity + Vector2.new(0, 0) -- Can add gravity here if desired
+			currentX = currentX + velocity.X
+			currentY = currentY + velocity.Y
+			
+			-- Bounce off edges
+			if currentX <= 0 then
+				currentX = 0
+				velocity = Vector2.new(-velocity.X * bounceMultiplier, velocity.Y)
+			elseif currentX + frameSize.X >= screenSize.X then
+				currentX = screenSize.X - frameSize.X
+				velocity = Vector2.new(-velocity.X * bounceMultiplier, velocity.Y)
+			end
+			
+			if currentY <= 0 then
+				currentY = 0
+				velocity = Vector2.new(velocity.X, -velocity.Y * bounceMultiplier)
+			elseif currentY + frameSize.Y >= screenSize.Y then
+				currentY = screenSize.Y - frameSize.Y
+				velocity = Vector2.new(velocity.X, -velocity.Y * bounceMultiplier)
+			end
+			
+			-- Update position
+			main.Position = UDim2.new(0, currentX, 0, currentY)
+			targetPos = main.Position
+		else
+			-- Normal smooth dragging
+			main.Position = UDim2.new(
+				main.Position.X.Scale,
+				main.Position.X.Offset + (targetPos.X.Offset - main.Position.X.Offset) * 0.2,
+				main.Position.Y.Scale,
+				main.Position.Y.Offset + (targetPos.Y.Offset - main.Position.Y.Offset) * 0.2
+			)
+			
+			-- Calculate velocity from movement when dragging ends
+			if not dragging and bounceEnabled then
+				velocity = Vector2.new(
+					(targetPos.X.Offset - main.Position.X.Offset) * 2,
+					(targetPos.Y.Offset - main.Position.Y.Offset) * 2
+				)
+			end
+		end
 	end)
 end
 
